@@ -1,0 +1,36 @@
+html
+
+    head
+
+        style
+            include ../public/admin-movie.css
+
+        script
+            include ../public/admin-movie.js
+
+        title Admin Movie Page
+
+    body
+
+        -const curYear = new Date().getFullYear() + 1;
+
+        mixin movieInputs
+            input(name="title", placeholder="Title")
+            input(name="img", placeholder="Image Link")
+            input(name="imdb_link", type="text", placeholder="IMDB Link")
+            input(name="release", type="number", placeholder="Year", min=1900, max=curYear)
+            input(name="available", type="number", placeholder="Inventory")
+        
+        h2 New Movie
+        form#newMovieForm
+            +movieInputs
+
+        button#submitMovie Add Movie to DB
+
+        h2 Update Movie
+        form#updateForm
+            input#_id(name="movie_id", placeholder="Movie ID")
+            +movieInputs
+            input(name="rented", type="number", placeholder="Rented Inventory")
+            
+        button#updateMovie Update Movie

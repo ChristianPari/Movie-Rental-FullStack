@@ -1,0 +1,46 @@
+html
+    head
+        title= titleVar
+
+        script
+            include ../public/homeStatic/new-homePage/home.js
+
+        style
+            include ../public/homeStatic/new-homePage/home.css
+    
+    body
+    
+    -const curYear = new Date().getFullYear();
+
+        h1= mainHead
+
+        //- div is made without html element name div
+        .allMovies
+            //- created a for each loop from the movieData rendered in the router request
+            each movieData in all_movies
+                    .movie(id=movieData._id)
+                        .displayMovie    
+                            h2=movieData.title
+                            h3=movieData.release
+                            img(src=`${movieData.img}`, alt=`${movieData.title}'s image`)
+                            a(href=`${movieData.imdb_link}`)= `${movieData.title} ImDb link`
+                            button.getBtns Get Movie Info
+                            button.rentBtns Rent Movie
+                        .editMovie
+                            form.form
+                                label(for="title") Title
+                                input(type="text", placeholder="Title", name="title")
+                                label(for="release") Release
+                                input(type="number", placeholder="Release Year", name="release", min=1900, max=curYear)
+                                label(for="img") Image
+                                input(type="text", placeholder="Image Link", name="img")
+                                label(for="imdb_link") IMDB Link
+                                input(type="url", placeholder="IMDB Link", name="imdb_link")
+                                label(for="available") Available
+                                input(type="number", placeholder="Available", name="available", min=0)
+                                label(for="rented") Rented
+                                input(type="number", placeholder="Rented", name="rented", min=0)
+                            button.confirmEdits Confirm
+                        .adminBtns
+                            button.deleteBtns Delete From Database
+                            button.editBtns Edit Movie

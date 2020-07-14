@@ -1,0 +1,90 @@
+.allMovies {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.movie {
+    margin: 10px;
+    text-align: center;
+    background-image: linear-gradient(lightblue, blue, lightblue);
+    width: 250px;
+    height: 400px;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.258) rgba(255, 255, 255, 0);
+    border-radius: 15px;
+    border-width: 15px;
+    border-color: white;
+    border-style: double;
+}
+
+.movie h2 {
+    margin: unset;
+}
+
+.movie h3 {
+    margin: unset;
+    margin-bottom: 3px;
+}
+
+.movie a {
+    color: white;
+}
+
+.movie img {
+    margin: auto;
+    width: 200px;
+    border-color: black;
+    border-style: double;
+    background-color: white;
+    border-radius: 10px;
+    border-width: 10px;
+    transition: transform 0.5s;
+}
+
+.movie img:hover {
+    transform: scale(1.02);
+}
+
+.movie button {
+    margin: 3px;
+    padding: 3px;
+    border-color: black;
+    border-radius: 10px;
+    border-width: 3px;
+    border-style: solid;
+    background-color: rgba(255, 255, 255, 0);
+    cursor: pointer;
+}
+
+.displayMovie {
+    display: flex;
+    flex-direction: column;
+}
+
+.editMovie {
+    margin: auto;
+    margin-top: 5px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    text-align: center;
+    border: none;
+    border-radius: 3px;
+    padding: 2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.adminBtns {
+    display: flex;
+    flex-direction: column;
+}
