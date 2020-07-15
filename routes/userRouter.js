@@ -1,10 +1,25 @@
+const userAuth = require("../middleware/userAuth");
+
 const router = require("express").Router(),
     User = require("../models/User"),
     validateUser = require("../middleware/validateUser"),
-    userAuth = require("../middleware/userAuth"),
+    loginUser = require("../middleware/loginUser"),
+    authUser = require("../middleware/userAuth"),
     bcrypt = require('bcrypt'),
     jwt = require("jsonwebtoken"),
     secret = process.env.JWT_SECRET;
+
+//TEST
+router.get(
+    "/testAuth",
+    authUser,
+    (req, res) => {
+
+        return res.send("Success, you are logged in");
+
+    }
+
+);
 
 // @desc post/make a new user and store in users collection
 // @path (server path)/user
@@ -40,18 +55,18 @@ router.post(
 
 );
 
-// PUT (login) route for Users
 // @desc put/login a new user and store in users collection
 // @path (server path)/user
 // @access public
 router.put(
     '/',
-    userAuth,
+    loginUser,
     (req, res) => {
 
-        const token = jwt.sign({ id: req.id }, secret);
+        const token = jwt.sign({ id: req.id }, secret, { expiresIn: "1h" });
+        // jwt.sign() creates the encrypted token
 
-        return res.json(token);
+        return res.json({ token });
 
     }
 

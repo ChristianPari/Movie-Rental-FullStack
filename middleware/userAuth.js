@@ -1,64 +1,34 @@
-const bcrypt = require("bcrypt"),
-    validator = require("validator"),
-    User = require("../models/User");
+const jwt = require('jsonwebtoken');
 
-const failedLogin = (req, res) => {
+module.exports = (req, res, next) => {
 
-    return res.status(409).json({ msg: "Login Failed" });
+    const {
 
-};
+        JWT_SECRET: jwtKey,
+        HEAD_AUTH_KEY: headerKey
 
-module.exports = async(req, res, next) => {
+    } = process.env,
+        token = req.headers[headerKey];
 
     try {
 
-        const email = req.body.email,
-            validEmail = (email === undefined || email.trim() === '') ?
-            false :
-            validator.isEmail(email);
+        const decodedData = jwt.verify(token, jwtKey);
 
-        if (!validEmail) {
+        if (decodedData.id === undefined) {
 
-            console.error('\nLogin Failed: Email Not Valid');
+            throw new Error("User ID not defined in the payload");
 
-            failedLogin();
-
-        };
-
-        const user = await User.findOne({ email: req.body.email });
-
-        if (user === null) {
-
-            console.error('\nLogin Failed: Email Not In Use');
-
-            failedLogin();
-
-        };
-
-        const pass = req.body.password,
-            testPass = (pass === undefined || pass.trim() === '') ?
-            false :
-            await bcrypt.compare(pass, user.password);
-
-        if (!testPass) {
-
-            console.error('\nLogin Failed: Password Invalid');
-
-            failedLogin();
-
-        };
-
-        req.id = user._id;
+        } else { req.user_id = decodedData.id; };
 
         next();
 
     } catch (err) {
 
-        return res.status(500).json({
+        console.log("\n* UserAuth Error:", err.message || err, "*\n");
 
-            errorAt: err.stack,
-            msg: err.message || err
-
+        return res.status(401).json({
+            status: 401,
+            error: "Not Authorized"
         });
 
     };

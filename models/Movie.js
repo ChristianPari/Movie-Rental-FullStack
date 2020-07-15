@@ -62,8 +62,9 @@ const mongoose = require('mongoose'),
                     default: 1
                 },
                 rented: {
-                    type: Number,
-                    default: 0
+                    type: [mongoose.Schema.Types.ObjectId],
+                    ref: "users",
+                    default: []
                 }
             }
         }
