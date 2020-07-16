@@ -1,13 +1,13 @@
-const userAuth = require("../middleware/userAuth");
-
 const router = require("express").Router(),
     User = require("../models/User"),
     validateUser = require("../middleware/validateUser"),
     loginUser = require("../middleware/loginUser"),
     authUser = require("../middleware/userAuth"),
+    adminAuth = require("../middleware/adminAuth"),
     bcrypt = require('bcrypt'),
     jwt = require("jsonwebtoken"),
-    secret = process.env.JWT_SECRET;
+    secret = process.env.JWT_SECRET,
+    headKey = process.env.HEAD_AUTH_KEY;
 
 //TEST
 router.get(
@@ -16,6 +16,17 @@ router.get(
     (req, res) => {
 
         return res.send("Success, you are logged in");
+
+    }
+
+);
+
+router.get(
+    "/testAdmin",
+    adminAuth,
+    (req, res) => {
+
+        return res.send("You are admin");
 
     }
 
@@ -43,11 +54,11 @@ router.post(
                 status: 201,
                 message: "User Created",
                 new_doc: newUser
-            })
+            });
 
         } catch (err) {
 
-            return res.status(500).json({ message: err.message || err });
+            return res.status(500).json({ msg: err.message || err });
 
         };
 
@@ -63,10 +74,23 @@ router.put(
     loginUser,
     (req, res) => {
 
-        const token = jwt.sign({ id: req.id }, secret, { expiresIn: "1h" });
-        // jwt.sign() creates the encrypted token
+        try {
 
-        return res.json({ token });
+            req.headers[headKey] = jwt.sign({ id: req.id }, secret, { expiresIn: "1h" });
+            // jwt.sign() creates the encrypted token
+
+            // return res.json(req.headers[headKey]);
+
+            return res.status(200).json({
+                status: 200,
+                msg: "Succesful Login"
+            });
+
+        } catch (err) {
+
+            return res.status(500).json({ msg: err.message || err });
+
+        };
 
     }
 
