@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-module.exports = (req, res, next) => {
+module.exports = async(req, res, next) => {
 
     const {
 
@@ -19,6 +20,16 @@ module.exports = (req, res, next) => {
             throw new Error("User ID not defined in the payload");
 
         } else { req.user_id = decodedData.id; };
+
+        const user = await User.findOne({ "_id": decodedData.id });
+
+        if (user === null) {
+
+            throw new Error("User ID in payload was invalid in mongo/mongoose");
+
+        };
+
+        req.user = user;
 
         next();
 

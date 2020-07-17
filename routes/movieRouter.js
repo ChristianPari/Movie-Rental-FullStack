@@ -1,6 +1,64 @@
 const express = require('express'),
     router = express.Router(),
-    Movie = require('../models/Movie');
+    Movie = require('../models/Movie'),
+    adminAuth = require("../middleware/adminAuth");
+
+//TEST
+router.get(
+    "/adminTest",
+    adminAuth,
+    async(req, res) => {
+
+        try {
+
+            return res.json({ msg: "You are Admin", admin_info: req.info });
+
+        } catch (err) {
+
+            const errMsg = err.message || err;
+
+            console.log("\n* Movie Router Error:", errMsg, "*\n");
+
+            return res.status(500).json({ error: errMsg });
+
+        };
+
+    }
+);
+
+// updated Movie Docs
+router.patch(
+    "/all",
+    async(req, res) => {
+
+        try {
+
+
+            const allMovies = await Movie.find({});
+
+            allMovies.forEach(async movie => {
+
+                movie.inventory.rented = [];
+
+                await Movie.replaceOne({ "_id": movie._id }, movie);
+
+            });
+
+            return res.json({
+                movies: await Movie.find({})
+            });
+
+        } catch (err) {
+
+            return res.json({
+                err: err.message || err
+            });
+
+        }
+
+    }
+
+);
 
 router.get('/all', (req, res) => {
 

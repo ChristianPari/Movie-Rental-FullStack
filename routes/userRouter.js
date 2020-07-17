@@ -15,7 +15,7 @@ router.get(
     authUser,
     (req, res) => {
 
-        return res.send("Success, you are logged in");
+        return res.send(req.user);
 
     }
 
@@ -26,7 +26,7 @@ router.get(
     adminAuth,
     (req, res) => {
 
-        return res.send("You are admin");
+        return res.send(req.admin);
 
     }
 
@@ -79,7 +79,7 @@ router.put(
             req.headers[headKey] = jwt.sign({ id: req.id }, secret, { expiresIn: "1h" });
             // jwt.sign() creates the encrypted token
 
-            // return res.json(req.headers[headKey]);
+            console.log(req.headers[headKey]);
 
             return res.status(200).json({
                 status: 200,

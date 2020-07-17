@@ -22,20 +22,25 @@ module.exports = async(req, res, next) => {
         };
 
         const user = await User.findOne({ "_id": decodedData.id });
-        isAdmin = user.admin.isAdmin;
 
-        if (!isAdmin) {
+        if (user === null) throw new Error("User ID within payload was invalid");
 
-            return res.status(401).json({
-                status: 401,
-                msg: "You are not authorized to access this page"
-            });
+        const { _id, email, "adminProps.isAdmin": isAdmin } = user;
+        const userInfo = {
+            id: _id,
+            email: email,
+            isAdmin: isAdmin
+        };
 
-        } else { next(); };
+        if (userInfo.isAdmin === false) throw new Error("User is not a admin");
+
+        req.admin = userInfo;
+
+        next();
 
     } catch (err) {
 
-        console.log("\n* UserAuth Error:", err.message || err, "*\n");
+        console.log("\n* AdminAuth Error:", err.message || err, "*\n");
 
         return res.status(401).json({
             status: 401,
