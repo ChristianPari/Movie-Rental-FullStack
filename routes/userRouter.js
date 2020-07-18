@@ -9,7 +9,7 @@ const router = require("express").Router(),
     secret = process.env.JWT_SECRET,
     headKey = process.env.HEAD_AUTH_KEY;
 
-//TEST
+// TESTING
 router.get(
     "/testAuth",
     authUser,
@@ -20,7 +20,7 @@ router.get(
     }
 
 );
-
+// TESTING
 router.get(
     "/testAdmin",
     adminAuth,
@@ -76,7 +76,7 @@ router.put(
 
         try {
 
-            req.headers[headKey] = jwt.sign({ id: req.id }, secret, { expiresIn: "1h" });
+            req.headers[headKey] = jwt.sign({ id: req.id }, secret, { expiresIn: 60 });
             // jwt.sign() creates the encrypted token
 
             console.log(req.headers[headKey]);
