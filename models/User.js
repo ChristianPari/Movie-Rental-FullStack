@@ -14,7 +14,7 @@ const mongoose = require("mongoose"),
             maxlength: 100
         },
 
-        adminProps: {
+        admin: {
 
             adminLevel: {
                 type: Number,

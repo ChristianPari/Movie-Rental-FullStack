@@ -15,26 +15,22 @@ module.exports = async(req, res, next) => {
 
         const decodedData = jwt.verify(token, jwtKey);
 
-        if (decodedData.id === undefined) {
+        if (decodedData.id === undefined && decodedData.id.length != 24) {
 
-            throw new Error("User ID not defined in the payload");
+            throw new Error("User ID not defined in the payload OR the length was invalid");
 
         };
 
-        const user = await User.findOne({ "_id": decodedData.id });
+        const query = { _id: decodedData.id, "admin.isAdmin": true },
+            projection = { password: 0, __v: 0 },
+            user = await User.findOne(
+                query,
+                projection
+            );
 
-        if (user === null) throw new Error("User ID within payload was invalid");
+        if (user === null) throw new Error("User is not an admin");
 
-        const { _id, email, "adminProps.isAdmin": isAdmin } = user;
-        const userInfo = {
-            id: _id,
-            email: email,
-            isAdmin: isAdmin
-        };
-
-        if (userInfo.isAdmin === false) throw new Error("User is not a admin");
-
-        req.admin = userInfo;
+        req.admin = user;
 
         next();
 

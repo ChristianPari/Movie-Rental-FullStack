@@ -2,35 +2,12 @@ const router = require("express").Router(),
     User = require("../models/User"),
     validateUser = require("../middleware/validateUser"),
     loginUser = require("../middleware/loginUser"),
-    authUser = require("../middleware/userAuth"),
+    userAuth = require("../middleware/userAuth"),
     adminAuth = require("../middleware/adminAuth"),
     bcrypt = require('bcrypt'),
     jwt = require("jsonwebtoken"),
     secret = process.env.JWT_SECRET,
     headKey = process.env.HEAD_AUTH_KEY;
-
-// TESTING
-router.get(
-    "/testAuth",
-    authUser,
-    (req, res) => {
-
-        return res.send(req.user);
-
-    }
-
-);
-// TESTING
-router.get(
-    "/testAdmin",
-    adminAuth,
-    (req, res) => {
-
-        return res.send(req.admin);
-
-    }
-
-);
 
 // @desc post/make a new user and store in users collection
 // @path (server path)/user
@@ -76,7 +53,7 @@ router.put(
 
         try {
 
-            req.headers[headKey] = jwt.sign({ id: req.id }, secret, { expiresIn: 60 });
+            req.headers[headKey] = jwt.sign({ id: req.id }, secret, { expiresIn: "5m" });
             // jwt.sign() creates the encrypted token
 
             console.log(req.headers[headKey]);
@@ -95,5 +72,30 @@ router.put(
     }
 
 );
+
+// TESTING
+
+// router.get(
+//     "/testAuth",
+//     userAuth,
+//     (req, res) => {
+
+//         return res.send(req.user);
+
+//     }
+
+// );
+
+// TESTING
+// router.get(
+//     "/testAdmin",
+//     adminAuth,
+//     (req, res) => {
+
+//         return res.send(req.admin);
+
+//     }
+
+// );
 
 module.exports = router;

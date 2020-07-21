@@ -4,51 +4,23 @@ const express = require('express'),
     adminAuth = require("../middleware/adminAuth"),
     userAuth = require('../middleware/userAuth');
 
-// TESTING
-router.get(
-    "/adminTest",
-    adminAuth,
-    async(req, res) => {
-
-        try {
-
-            return res.json({ msg: "You are Admin", admin_info: req.info });
-
-        } catch (err) {
-
-            const errMsg = err.message || err;
-
-            console.log("\n* Movie Router Error:", errMsg, "*\n");
-
-            return res.status(500).json({ error: errMsg });
-
-        };
-
-    }
-);
-
-// updated Movie Docs
-// one time update for the rented field
-//todo: make a full on patch to work with any field or add a field to any document
+// @desc patch/update all movie docs in db from the request body
+// @path (server path)/movie/patch/allMovies
+// @access admin
 router.patch(
-    "/all",
+    "/patch/allMovies",
     async(req, res) => {
 
         try {
 
+            const updates = req.body;
 
-            const allMovies = await Movie.find({});
-
-            allMovies.forEach(async movie => {
-
-                movie.inventory.rented = [];
-
-                await Movie.replaceOne({ "_id": movie._id }, movie);
-
-            });
+            const report = await Movie.updateMany({}, updates);
 
             return res.json({
-                movies: await Movie.find({})
+                allDoc: await Movie.find({}),
+                report: report,
+                message: "Succesful Patch"
             });
 
         } catch (err) {
@@ -57,44 +29,15 @@ router.patch(
                 err: err.message || err
             });
 
-        }
+
+        };
 
     }
-
 );
 
-// router.patch(
-//     "/patch/testing",
-//     async(req, res) => {
-
-//         try {
-
-//             const allMovies = await Movie.find({}),
-//                 updates = req.body;
-
-//             allMovies.forEach(async movie => {
-
-//                 await Movie.findOneAndUpdate({ "_id": movie._id }, { updates });
-
-//             });
-
-//             return res.json({
-//                 old_movies: allMovies,
-//                 updated: await Movie.find({})
-//             });
-
-//         } catch (err) {
-
-//             return res.json({
-//                 err: err.message || err
-//             });
-
-
-//         };
-
-//     }
-// );
-
+// @desc get all movies from the db
+// @path (server path)/movie/all
+// @access public
 router.get(
     '/all',
     userAuth,
@@ -126,6 +69,9 @@ router.get(
 
     });
 
+// @desc get a specific movie via document id
+// @path (server path)/movie/:movie_id
+// @access public
 router.get(
     '/:movie_id',
     userAuth,
@@ -155,10 +101,11 @@ router.get(
 
             });
 
-
-
     });
 
+// @desc get every movie that is either available or rented via true or false as request params
+// @path (server path)/movie/available/:available
+// @access public
 router.get(
     '/available/:available',
     userAuth,
@@ -188,6 +135,9 @@ router.get(
 
     });
 
+// @desc post/create a new movie and have it stored as a doc within the db
+// @path (server path)/movie
+// @access admin
 router.post(
     '/',
     adminAuth,
@@ -221,6 +171,9 @@ router.post(
 
     });
 
+// @desc delete a movie doc from the db
+// @path (server path)/movie/:movie_id
+// @access admin
 router.delete(
     '/:movie_id',
     adminAuth,
@@ -257,6 +210,9 @@ router.delete(
 
     });
 
+// @desc patch/update a movie doc from the db
+// @path (server path)/movie/:movie_id
+// @access admin
 router.patch(
     '/:movie_id',
     adminAuth,
@@ -293,6 +249,72 @@ router.patch(
         }
 
     });
+
+// TESTING
+
+// router.get(
+//     "/adminTest",
+//     adminAuth,
+//     async(req, res) => {
+
+//         try {
+
+//             return res.json({ msg: "You are Admin", admin_info: req.info });
+
+//         } catch (err) {
+
+//             const errMsg = err.message || err;
+
+//             console.log("\n* Movie Router Error:", errMsg, "*\n");
+
+//             return res.status(500).json({ error: errMsg });
+
+//         };
+
+//     }
+// );
+
+// router.patch(
+//     "/patch/allMovies",
+//     adminAuth,
+//     async(req, res) => {
+
+//         try {
+
+//             await Movie.updateMany({}, { "inventory.rented": [] });
+
+//^ shorter faster way to produce this below
+// const allMovies = await Movie.find({});
+
+// allMovies.forEach(async movie => {
+
+//     movie.inventory.rented = [];
+
+//     await Movie.replaceOne({ "_id": movie._id }, movie);
+
+// });
+
+// return res.json({
+//     movies: await Movie.find({})
+// });
+
+//             return res.json({
+//                 allDoc: await Movie.find({}),
+//                 report: this.report,
+//                 message: "Succesful Patch"
+//             });
+
+//         } catch (err) {
+
+//             return res.json({
+//                 err: err.message || err
+//             });
+
+//         }
+
+//     }
+
+// );
 
 module.exports = router;
 

@@ -15,19 +15,26 @@ module.exports = async(req, res, next) => {
 
         const decodedData = jwt.verify(token, jwtKey);
 
-        if (decodedData.id === undefined) {
+        if (decodedData.id === undefined && decodedData.id.length !== 24) {
 
-            throw new Error("User ID not defined in the payload");
+            throw new Error("User ID not defined in the payload OR the length was invalid");
 
-        } else { req.user_id = decodedData.id; };
+        }
 
-        const user = await User.findOne({ "_id": decodedData.id });
+        const query = { "_id": decodedData.id },
+            projection = { password: 0, admin: 0, __v: 0 },
+            user = await User.findOne(
+                query,
+                projection
+            );
 
-        if (user === null) {
+        if (user === null) { // only if valid length for ID but isn't a valid ID for any doc within the database
 
-            throw new Error("User ID in payload was invalid in mongo/mongoose");
+            throw new Error("User does not exist");
 
         };
+
+        console.log(user);
 
         req.user = user;
 
