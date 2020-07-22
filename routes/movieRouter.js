@@ -2,13 +2,54 @@ const express = require('express'),
     router = express.Router(),
     Movie = require('../models/Movie'),
     adminAuth = require("../middleware/adminAuth"),
-    userAuth = require('../middleware/userAuth');
+    userAuth = require('../middleware/userAuth'),
+    newError = require('../utils/newError');
+
+//todo movie route to add or delete innventory
+
+// @desc add inventory
+// @path (server path)/movie/addin
+// @access admin lvl 2
+router.patch(
+    "/addin",
+    adminAuth,
+    async(req, res) => {
+
+        try {
+
+            //todo
+            // admin level allows certain increase and descrease (lvl 1: no ability to change inventory, lvl 2: 10+-, lvl 3: 100+-)
+
+            if (req.admin.admin.adminLevel <= 1) throw newError("Not Authorized", 401);
+
+            const updatedMovie = await Movie.findByIdAndUpdate(req.body.movieID, { $inc: { "inventory.available": req.body.inc } }, { new: 1 });
+
+            return res.status(200).json({
+                status: 200,
+                msg: "Successful Inventory Change",
+                new: updatedMovie
+            });
+
+        } catch (err) {
+
+            const errMsg = err.message || err,
+                errCode = err.code || 500;
+
+            return res.status(errCode).json({
+                status: errCode,
+                error: errMsg
+            });
+
+        };
+    }
+);
 
 // @desc patch/update all movie docs in db from the request body
 // @path (server path)/movie/patch/allMovies
 // @access admin
 router.patch(
     "/patch/allMovies",
+    adminAuth,
     async(req, res) => {
 
         try {
@@ -29,7 +70,6 @@ router.patch(
                 err: err.message || err
             });
 
-
         };
 
     }
@@ -40,7 +80,6 @@ router.patch(
 // @access public
 router.get(
     '/all',
-    userAuth,
     async(req, res) => {
 
         await Movie.find({})
@@ -74,7 +113,6 @@ router.get(
 // @access public
 router.get(
     '/:movie_id',
-    userAuth,
     async(req, res) => {
 
         await Movie.findById(req.params.movie_id)
@@ -108,7 +146,6 @@ router.get(
 // @access public
 router.get(
     '/available/:available',
-    userAuth,
     findAvail,
     (req, res) => {
 
