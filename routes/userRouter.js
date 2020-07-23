@@ -111,12 +111,12 @@ router.patch(
             const updatedMovie = await Movie.findByIdAndUpdate(movieQuery, {
                 $inc: { "inventory.available": 1 },
                 $pull: { "inventory.rented": userID }
-            });
+            }, { new: 1 });
 
             // modify the user doc by removing the movie
             const updatedUser = await User.findByIdAndUpdate(userID, {
                 $pull: { "rentedMovies": movieQuery }
-            });
+            }, { new: 1 });
 
             // return all good
             return res.status(200).json({
