@@ -15,14 +15,68 @@ router.patch(
     adminAuth,
     async(req, res) => {
 
+        const adminLvl = req.user.admin.adminLevel;
+
         try {
+
+            const inc = req.body.inc;
 
             //todo
             // admin level allows certain increase and descrease (lvl 1: no ability to change inventory, lvl 2: 10+-, lvl 3: 100+-)
 
-            if (req.user.admin.adminLevel <= 1) throw newError("Not Authorized", 401);
+            if (adminLvl <= 1 || (adminLvl === 2 && inc > 10) || (adminLvl === 3 && inc > 100))
+                throw newError("Not Authorized", 401)
 
-            const updatedMovie = await Movie.findByIdAndUpdate(req.body.movieID, { $inc: { "inventory.available": req.body.inc } }, { new: 1 });
+
+            const updatedMovie = await Movie.findByIdAndUpdate(req.body.movieID, { $inc: { "inventory.available": inc } }, { new: 1 });
+
+            return res.status(200).json({
+                status: 200,
+                msg: "Successful Inventory Change",
+                new: updatedMovie
+            });
+
+        } catch (err) {
+
+            const errMsg = err.message || err,
+                errCode = err.code || 500;
+
+            return res.status(errCode).json({
+                status: errCode,
+                error: errMsg
+            });
+
+        };
+    }
+);
+
+router.patch(
+    "/invUpd/:op",
+    adminAuth,
+    async(req, res) => {
+
+        const adminLvl = req.user.admin.adminLevel;
+
+        try {
+
+            const inc = req.body.inc;
+
+            //todo
+            // admin level allows certain increase and descrease (lvl 1: no ability to change inventory, lvl 2: 10+-, lvl 3: 100+-)
+
+            if (req.params.op === "inc") {
+
+                if (adminLvl <= 1 || (adminLvl === 2 && inc > 10) || (adminLvl === 3 && inc > 100))
+                    throw newError("Not Authorized", 401)
+
+            } else if (req.params.op === "dec") {
+
+                if (adminLvl <= 1 || (adminLvl === 2 && inc < -10) || (adminLvl === 3 && inc < -100))
+                    throw newError("Not Authorized", 401)
+
+            } else { throw newError("Invalid parameter being passed", 404); };
+
+            const updatedMovie = await Movie.findByIdAndUpdate(req.body.movieID, { $inc: { "inventory.available": inc } }, { new: 1 });
 
             return res.status(200).json({
                 status: 200,
