@@ -1,7 +1,7 @@
 // create a custom error
-module.exports = (msg, status) => {
+module.exports = (message, status) => {
 
-    const newError = new Error(msg);
+    const newError = new Error(message);
     newError.code = status;
     return newError
 

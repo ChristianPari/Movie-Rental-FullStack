@@ -44,7 +44,7 @@ router.patch(
             };
 
             // modify the user doc rented movies property
-            const rentingUser = await User.updateOne({
+            await User.updateOne({
                 "_id": req.user._id
             }, {
                 $addToSet: {
@@ -53,7 +53,7 @@ router.patch(
             });
 
             // modifying the movie doc
-            const rentedMovie = await Movie.updateOne({
+            await Movie.updateOne({
                 "_id": movieQuery
             }, {
                 $addToSet: { "inventory.rented": req.user._id },
@@ -84,6 +84,63 @@ router.patch(
 )
 
 //todo movie return route
+// @desc return a movie
+// @path (server path)/user/return
+// @access logged in user
+router.patch(
+    '/return',
+    userAuth,
+    async(req, res) => {
+
+        const movieQuery = req.body.movieID;
+
+        try {
+
+            // ensure movie exists 
+            const foundMovie = await Movie.findById(movieQuery);
+
+            if (foundMovie === null) throw newError("Movie: [", movieQuery, "] Does Not Exist", 404);
+
+            // ensure movie being returned is in users rented array
+            const userID = req.user._id,
+                userData = await User.findOne({ "_id": userID }, { rentedMovies: 1, _id: 0 });
+
+            if (userData.rentedMovies.indexOf(movieQuery) === -1) throw newError("User is not currently renting this movie", 409);
+
+            // modify the movie doc by removing the user
+            const updatedMovie = await Movie.findByIdAndUpdate(movieQuery, {
+                $inc: { "inventory.available": 1 },
+                $pull: { "inventory.rented": userID }
+            });
+
+            // modify the user doc by removing the movie
+            const updatedUser = await User.findByIdAndUpdate(userID, {
+                $pull: { "rentedMovies": movieQuery }
+            });
+
+            // return all good
+            return res.status(200).json({
+                status: 200,
+                msg: "Successful Return",
+                updated_movie: updatedMovie,
+                updated_user: updatedUser
+            });
+
+        } catch (err) {
+
+            const errMsg = err.message || err,
+                errCode = err.code || 500;
+
+            console.log("* Error in movie returning:", errMsg, "*");
+
+            return res.status(errCode).json({
+                status: errCode,
+                error: errMsg
+            });
+
+        };
+
+    });
 
 // @desc get all users
 // @path (server path)/user/all
@@ -123,7 +180,15 @@ router.post(
 
         } catch (err) {
 
-            return res.status(500).json({ msg: err.message || err });
+            const errMsg = err.message || err,
+                errCode = err.code || 500;
+
+            return res.status(errCode).json({
+
+                status: errCode,
+                message: errMsg
+
+            });
 
         };
 
@@ -153,7 +218,15 @@ router.put(
 
         } catch (err) {
 
-            return res.status(500).json({ msg: err.message || err });
+            const errMsg = err.message || err,
+                errCode = err.code || 500;
+
+            return res.status(errCode).json({
+
+                status: errCode,
+                message: errMsg
+
+            });
 
         };
 

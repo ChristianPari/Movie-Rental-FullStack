@@ -20,7 +20,7 @@ router.patch(
             //todo
             // admin level allows certain increase and descrease (lvl 1: no ability to change inventory, lvl 2: 10+-, lvl 3: 100+-)
 
-            if (req.admin.admin.adminLevel <= 1) throw newError("Not Authorized", 401);
+            if (req.user.admin.adminLevel <= 1) throw newError("Not Authorized", 401);
 
             const updatedMovie = await Movie.findByIdAndUpdate(req.body.movieID, { $inc: { "inventory.available": req.body.inc } }, { new: 1 });
 
@@ -66,8 +66,14 @@ router.patch(
 
         } catch (err) {
 
-            return res.json({
-                err: err.message || err
+            const errMsg = err.message || err,
+                errCode = err.code || 500;
+
+            return res.status(errCode).json({
+
+                status: errCode,
+                message: errMsg
+
             });
 
         };
@@ -96,13 +102,15 @@ router.get(
             })
             .catch(err => {
 
-                return res.status(500).json({
+                const errMsg = err.message || err,
+                    errCode = err.code || 500;
 
-                    status: 500,
-                    message: err.message,
-                    error: err
+                return res.status(errCode).json({
 
-                })
+                    status: errCode,
+                    message: errMsg
+
+                });
 
             });
 
@@ -129,13 +137,15 @@ router.get(
             })
             .catch(err => {
 
-                return res.status(500).json({
+                const errMsg = err.message || err,
+                    errCode = err.code || 500;
 
-                    status: 500,
-                    message: err.message,
-                    error: err
+                return res.status(errCode).json({
 
-                })
+                    status: errCode,
+                    message: errMsg
+
+                });
 
             });
 
@@ -149,26 +159,42 @@ router.get(
     findAvail,
     (req, res) => {
 
-        const movies = req.req_movies;
-        let request = req.params.available;
+        try {
 
-        if (req.params.available == true) {
+            const movies = req.req_movies;
+            let request = req.params.available;
 
-            request = 'available';
+            if (req.params.available == true) {
 
-        } else {
+                request = 'available';
 
-            request = 'unavailable';
+            } else {
+
+                request = 'unavailable';
+
+            }
+
+            return res.status(200).json({
+
+                status: 200,
+                message: `These are our ${request} movies`,
+                movies: movies
+
+            });
+
+        } catch (err) {
+
+            const errMsg = err.message || err,
+                errCode = err.code || 500;
+
+            return res.status(errCode).json({
+
+                status: errCode,
+                message: errMsg
+
+            });
 
         }
-
-        return res.status(200).json({
-
-            status: 200,
-            message: `These are our ${request} movies`,
-            movies: movies
-
-        });
 
     });
 
@@ -196,14 +222,15 @@ router.post(
 
         } catch (err) {
 
-            return res.status(500).json({
+            const errMsg = err.message || err,
+                errCode = err.code || 500;
 
-                status: 500,
-                messgae: err.message,
-                error: err
+            return res.status(errCode).json({
+
+                status: errCode,
+                message: errMsg
 
             });
-
         }
 
     });
@@ -234,11 +261,13 @@ router.delete(
 
         } catch (err) {
 
-            return res.status(500).json({
+            const errMsg = err.message || err,
+                errCode = err.code || 500;
 
-                status: 500,
-                message: err.message,
-                error: err
+            return res.status(errCode).json({
+
+                status: errCode,
+                message: errMsg
 
             });
 
@@ -275,11 +304,13 @@ router.patch(
 
         } catch (err) {
 
-            return res.status(500).json({
+            const errMsg = err.message || err,
+                errCode = err.code || 500;
 
-                status: 500,
-                message: err.message,
-                error: err
+            return res.status(errCode).json({
+
+                status: errCode,
+                message: errMsg
 
             });
 

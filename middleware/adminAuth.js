@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken'),
-    User = require("../models/User");
+    User = require("../models/User"),
+    newError = require("../utils/newError");
 
 module.exports = async(req, res, next) => {
 
@@ -17,7 +18,7 @@ module.exports = async(req, res, next) => {
 
         if (decodedData.id === undefined && decodedData.id.length != 24) {
 
-            throw new Error("User ID not defined in the payload OR the length was invalid");
+            throw newError("User ID not defined in the payload OR the length was invalid", 404);
 
         };
 
@@ -28,19 +29,20 @@ module.exports = async(req, res, next) => {
                 projection
             );
 
-        if (user === null) throw new Error("User is not an admin");
+        if (user === null) throw newError("User is not an admin", 401);
 
-        req.admin = user;
+        req.user = user;
 
         next();
 
     } catch (err) {
 
-        console.log("\n* AdminAuth Error:", err.message || err, "*\n");
+        const errMsg = err.message || err,
+            errCode = err.code || 500;
 
-        return res.status(401).json({
-            status: 401,
-            error: "Not Authorized"
+        return res.status(errCode).json({
+            status: errCode,
+            error: errMsg
         });
 
     };
