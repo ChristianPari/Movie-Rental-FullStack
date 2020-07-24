@@ -11,7 +11,8 @@ const router = require("express").Router(),
     secret = process.env.JWT_SECRET,
     headKey = process.env.HEAD_AUTH_KEY;
 
-//todo movie renting route
+//todo merge the rent and return routes into a single request
+
 router.patch(
     "/rent",
     userAuth,
@@ -83,7 +84,6 @@ router.patch(
     }
 )
 
-//todo movie return route
 // @desc return a movie
 // @path (server path)/user/return
 // @access logged in user

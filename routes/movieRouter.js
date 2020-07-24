@@ -5,30 +5,54 @@ const express = require('express'),
     userAuth = require('../middleware/userAuth'),
     newError = require('../utils/newError');
 
-//todo movie route to add or delete innventory
-
-// @desc add inventory
-// @path (server path)/movie/addin
-// @access admin lvl 2
+// @desc add or delete inventory of a specific movie via request params
+// @path (server path)/movie/invUpd/:op
+// @access admin lvl 2 and higher
 router.patch(
-    "/addin",
+    "/updateinv",
     adminAuth,
     async(req, res) => {
 
-        const adminLvl = req.user.admin.adminLevel;
+        const { movieID, inc, isIncrease = true } = req.body,
+            adminLevel = req.user.admin.adminLevel;
 
         try {
 
-            const inc = req.body.inc;
+            // movieID
+            if (typeof movieID !== "string" || movieID.length !== 24) throw newError("Movie ID is invalid ID", 400);
 
-            //todo
-            // admin level allows certain increase and descrease (lvl 1: no ability to change inventory, lvl 2: 10+-, lvl 3: 100+-)
+            // inc
+            if (typeof inc !== "number" || inc < 0) throw newError("Increment Number is invalid", 400);
 
-            if (adminLvl <= 1 || (adminLvl === 2 && inc > 10) || (adminLvl === 3 && inc > 100))
-                throw newError("Not Authorized", 401)
+            let limit; // going to be set to the admins' limitation of incereasing or decreasing a movies' inventory
 
+            switch (adminLevel) {
+                case 1:
+                    limit = 1;
+                    break;
 
-            const updatedMovie = await Movie.findByIdAndUpdate(req.body.movieID, { $inc: { "inventory.available": inc } }, { new: 1 });
+                case 2:
+                    limit = 10;
+                    break;
+
+                case 3:
+                    limit = 100;
+                    break;
+            }
+
+            if (inc > limit) // if inc is greater than admins' limitation throw error
+                throw newError(`Not Authorized (admin level: ${adminLevel}) to Manipulate by: ${inc}`, 401);
+
+            const increment = isIncrease === true ? inc : -inc,
+                foundMovie = await Movie.findById(movieID);
+
+            // ensuring movie exists
+            if (foundMovie === null) throw newError(`Movie with ID: ${movieID} doesn't exist`, 404);
+
+            // if inventory would go below 0 on request then throw error
+            if (foundMovie.inventory.available + increment < 0) throw newError("Movie inventory cannot be negative", 400);
+
+            const updatedMovie = await Movie.findOneAndUpdate({ "_id": movieID }, { $inc: { "inventory.available": increment } }, { new: 1 });
 
             return res.status(200).json({
                 status: 200,
@@ -38,63 +62,15 @@ router.patch(
 
         } catch (err) {
 
-            const errMsg = err.message || err,
-                errCode = err.code || 500;
+            const { message = err, code = 500 } = err;
 
-            return res.status(errCode).json({
-                status: errCode,
-                error: errMsg
-            });
+            return res.status(code).json({
+                status: code,
+                error: message
+            })
 
-        };
-    }
-);
+        }
 
-router.patch(
-    "/invUpd/:op",
-    adminAuth,
-    async(req, res) => {
-
-        const adminLvl = req.user.admin.adminLevel;
-
-        try {
-
-            const inc = req.body.inc;
-
-            //todo
-            // admin level allows certain increase and descrease (lvl 1: no ability to change inventory, lvl 2: 10+-, lvl 3: 100+-)
-
-            if (req.params.op === "inc") {
-
-                if (adminLvl <= 1 || (adminLvl === 2 && inc > 10) || (adminLvl === 3 && inc > 100))
-                    throw newError("Not Authorized", 401)
-
-            } else if (req.params.op === "dec") {
-
-                if (adminLvl <= 1 || (adminLvl === 2 && inc < -10) || (adminLvl === 3 && inc < -100))
-                    throw newError("Not Authorized", 401)
-
-            } else { throw newError("Invalid parameter being passed", 404); };
-
-            const updatedMovie = await Movie.findByIdAndUpdate(req.body.movieID, { $inc: { "inventory.available": inc } }, { new: 1 });
-
-            return res.status(200).json({
-                status: 200,
-                msg: "Successful Inventory Change",
-                new: updatedMovie
-            });
-
-        } catch (err) {
-
-            const errMsg = err.message || err,
-                errCode = err.code || 500;
-
-            return res.status(errCode).json({
-                status: errCode,
-                error: errMsg
-            });
-
-        };
     }
 );
 
