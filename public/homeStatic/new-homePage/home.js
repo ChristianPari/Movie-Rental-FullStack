@@ -23,10 +23,36 @@ function setEventListeners() {
         confirmBtns = document.getElementsByClassName('confirmEdits'),
         editBtns = document.getElementsByClassName('editBtns');
 
+    document.getElementById("LoginBtn").onclick = loginUser;
+    document.getElementById("LogoutBtn").onclick = logoutUser;
+
     for (const btn of getBtns) { btn.onclick = reqMovieData; }
     for (const btn of deleteBtns) { btn.onclick = deleteMovie; }
     for (const btn of confirmBtns) { btn.onclick = confirmEdit; }
     for (const btn of editBtns) { btn.onclick = editMovie; }
+
+};
+
+function loginUser() {
+
+    location = `${window.location.origin}/login`;
+
+};
+
+function logoutUser() {
+
+    const token = localStorage.getItem("login_token");
+
+    if (token !== null) {
+
+        localStorage.removeItem("login_token");
+        alert("Logged Out");
+
+    } else {
+
+        alert("You are not logged in");
+
+    };
 
 };
 

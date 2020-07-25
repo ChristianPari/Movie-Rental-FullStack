@@ -1,0 +1,16 @@
+html
+    head
+        title Login
+        script
+            include ../public/login.js
+
+        body
+            h1 Login
+
+            label Email: 
+            input#email(placeholder="Enter Email" type="email" minLength=5)
+            br
+            label Password: 
+            input#password(placeholder="Enter Password" type="password" minLength=7)
+            br
+            button#submitLogin Submit

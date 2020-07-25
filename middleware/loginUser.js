@@ -10,6 +10,8 @@ const failedLogin = (req, res) => {
 
 module.exports = async(req, res, next) => {
 
+    console.log(req.body);
+
     try {
 
         const email = req.body.email,
@@ -21,7 +23,7 @@ module.exports = async(req, res, next) => {
 
             console.error('\nLogin Failed: Email Not Valid');
 
-            failedLogin();
+            failedLogin(req, res);
 
         };
 
@@ -31,7 +33,7 @@ module.exports = async(req, res, next) => {
 
             console.error('\nLogin Failed: Email Not In Use');
 
-            failedLogin();
+            failedLogin(req, res);
 
         };
 
@@ -44,7 +46,7 @@ module.exports = async(req, res, next) => {
 
             console.error('\nLogin Failed: Password Invalid');
 
-            failedLogin();
+            failedLogin(req, res);
 
         };
 

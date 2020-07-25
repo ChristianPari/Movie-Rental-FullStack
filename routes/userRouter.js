@@ -14,58 +14,76 @@ const router = require("express").Router(),
 //todo merge the rent and return routes into a single request
 
 router.patch(
-    "/rent",
+    "/rent_return",
     userAuth,
     async(req, res) => {
 
-        const movieQuery = req.body.movieID;
+        const { movieID, isRenting = true } = req.body;
 
         try {
             // make sure movie can be rented/is available
-            const query = { "_id": movieQuery, "inventory.available": { $gte: 1 } },
-                foundMovie = await Movie.findOne(query);
+            const query =
+                isRenting === true ? { "_id": movieID, "inventory.available": { $gte: 1 } } : { "_id": movieID };
+
+            const userUp =
+                isRenting === true ? { $addToSet: { rentedMovies: movieID } } : { $pull: { rentedMovies: movieID } };
+
+            const movieUp =
+                isRenting === true ? { $addToSet: { "inventory.rented": req.user._id }, $inc: { "inventory.available": -1 } } : { $pull: { "inventory.rented": req.user._id }, $inc: { "inventory.available": 1 } };
+
+            const foundMovie = await Movie.findOne(query);
 
             console.log("Found Movie:", foundMovie);
 
             if (foundMovie === null) {
 
-                console.log("* Movie ID caused ERROR renting:", movieQuery, "*");
+                console.log("* Movie ID caused ERROR renting:", movieID, "*");
 
                 throw newError("Movie Not Found or Unavailable", 404);
 
             };
 
-            // check if the user is already renting the movie
-            if (req.user.rentedMovies.indexOf(movieQuery) !== -1) {
+            // check if the user is already renting the movie or is going to rent
+            const curRenting =
+                req.user.rentedMovies.indexOf(movieID) === -1 ?
+                false :
+                true;
 
-                console.log("* Movie: [", movieQuery, "] already being rented by User:", req.user.email, "*");
+            const isDoing =
+                curRenting === false ?
+                "isn't" :
+                "is already";
 
-                throw newError("Movie Already Being Rented", 409);
+            if (isRenting === curRenting) {
+
+                console.log(`* Movie [${movieID}] ${isDoing} being rented by User [${req.user.email}] *`);
+
+                throw newError(`Movie ${isDoing} Being Rented`, 409);
 
             };
 
             // modify the user doc rented movies property
-            await User.updateOne({
+            await User.findByIdAndUpdate({
                 "_id": req.user._id
-            }, {
-                $addToSet: {
-                    "rentedMovies": movieQuery
-                }
-            });
+            }, userUp, { new: 1 });
 
             // modifying the movie doc
-            await Movie.updateOne({
-                "_id": movieQuery
-            }, {
-                $addToSet: { "inventory.rented": req.user._id },
-                $inc: { "inventory.available": -1 }
-            });
+            await Movie.findByIdAndUpdate({
+                    "_id": movieID
+                },
+                movieUp, { new: 1 }
+            );
+
+            const operation =
+                isRenting === false ?
+                "Return" :
+                "Rental";
 
             return res.status(200).json({
                 status: 200,
-                msg: "Successful Rental",
+                msg: `Successful ${operation}`,
                 user: await User.findById(req.user._id),
-                movie: await Movie.findById(movieQuery)
+                movie: await Movie.findById(movieID)
             });
 
         } catch (err) {
@@ -82,65 +100,7 @@ router.patch(
 
         };
     }
-)
-
-// @desc return a movie
-// @path (server path)/user/return
-// @access logged in user
-router.patch(
-    '/return',
-    userAuth,
-    async(req, res) => {
-
-        const movieQuery = req.body.movieID;
-
-        try {
-
-            // ensure movie exists 
-            const foundMovie = await Movie.findById(movieQuery);
-
-            if (foundMovie === null) throw newError("Movie: [", movieQuery, "] Does Not Exist", 404);
-
-            // ensure movie being returned is in users rented array
-            const userID = req.user._id,
-                userData = await User.findOne({ "_id": userID }, { rentedMovies: 1, _id: 0 });
-
-            if (userData.rentedMovies.indexOf(movieQuery) === -1) throw newError("User is not currently renting this movie", 409);
-
-            // modify the movie doc by removing the user
-            const updatedMovie = await Movie.findByIdAndUpdate(movieQuery, {
-                $inc: { "inventory.available": 1 },
-                $pull: { "inventory.rented": userID }
-            }, { new: 1 });
-
-            // modify the user doc by removing the movie
-            const updatedUser = await User.findByIdAndUpdate(userID, {
-                $pull: { "rentedMovies": movieQuery }
-            }, { new: 1 });
-
-            // return all good
-            return res.status(200).json({
-                status: 200,
-                msg: "Successful Return",
-                updated_movie: updatedMovie,
-                updated_user: updatedUser
-            });
-
-        } catch (err) {
-
-            const errMsg = err.message || err,
-                errCode = err.code || 500;
-
-            console.log("* Error in movie returning:", errMsg, "*");
-
-            return res.status(errCode).json({
-                status: errCode,
-                error: errMsg
-            });
-
-        };
-
-    });
+);
 
 // @desc get all users
 // @path (server path)/user/all
@@ -148,7 +108,33 @@ router.patch(
 router.get(
     "/all",
     adminAuth,
-    (req, res) => {
+    async(req, res) => {
+
+        await User.find({})
+            .then(allUsers => {
+
+                return res.status(200).json({
+
+                    status: 200,
+                    message: 'All Users within our Database',
+                    all_movies: allUsers
+
+                });
+
+            })
+            .catch(err => {
+
+                const errMsg = err.message || err,
+                    errCode = err.code || 500;
+
+                return res.status(errCode).json({
+
+                    status: errCode,
+                    message: errMsg
+
+                });
+
+            });
 
 
     }
@@ -206,14 +192,15 @@ router.put(
 
         try {
 
-            req.headers[headKey] = jwt.sign({ id: req.id }, secret, { expiresIn: "1h" });
+            const token = jwt.sign({ id: req.id }, secret, { expiresIn: "1h" });
             // jwt.sign() creates the encrypted token
 
             console.log(req.headers[headKey]);
 
             return res.status(200).json({
                 status: 200,
-                msg: "Succesful Login"
+                msg: "Succesful Login",
+                token: token
             });
 
         } catch (err) {

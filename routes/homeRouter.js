@@ -3,19 +3,28 @@ const express = require('express'),
     Movie = require('../models/Movie'),
     adminAuth = require('../middleware/adminAuth');
 
+router.get(
+    "/",
+    async(req, res) => {
+        // expected query props: 'head, title'
+        const { head, title } = req.query,
+            availMovies = await Movie.find({ 'inventory.available': { $gte: 1 } });
+
+        res.render('home', { titleVar: title || 'Movies Home', mainHead: head || 'All our Movies', all_movies: availMovies });
+
+    }
+)
+
+router.get(
+    "/login",
+    (req, res) => {
+        res.render('login');
+    }
+)
+
 router.get('/test', (req, res) => {
 
     res.render('test', { titleVariable: 'Movie Home Page', subHead: "See Movies" });
-
-});
-
-router.get('/mrental', async(req, res) => {
-
-    // expected query props: 'head, title'
-    const { head, title } = req.query,
-        availMovies = await Movie.find({ 'inventory.available': { $gte: 1 } });
-
-    res.render('home', { titleVar: title || 'Movies Home', mainHead: head || 'All our Movies', all_movies: availMovies });
 
 });
 

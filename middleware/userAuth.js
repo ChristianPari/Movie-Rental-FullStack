@@ -34,7 +34,7 @@ module.exports = async(req, res, next) => {
 
         };
 
-        console.log(user);
+        console.log("User:", user);
 
         req.user = user;
 
