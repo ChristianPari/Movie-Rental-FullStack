@@ -195,8 +195,6 @@ router.put(
             const token = jwt.sign({ id: req.id }, secret, { expiresIn: "1h" });
             // jwt.sign() creates the encrypted token
 
-            console.log(req.headers[headKey]);
-
             return res.status(200).json({
                 status: 200,
                 msg: "Succesful Login",

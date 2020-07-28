@@ -9,9 +9,13 @@ html
             include ../public/homeStatic/new-homePage/home.css
     
     body
-    
-        button#LoginBtn Login
-        button#LogoutBtn Logout
+        if isLoggedIn
+            button#LoginBtn(style="display: none") Login
+            button#LogoutBtn(style="display: initial") Logout
+        else
+            button#LoginBtn(style="display: initial") Login
+            button#LogoutBtn(style="display: none") Logout
+        
 
         -const curYear = new Date().getFullYear();
 

@@ -1,0 +1,23 @@
+body {
+    text-align: center;
+}
+
+#Container {
+    margin: auto;
+    width: 50%;
+    height: 50%;
+}
+
+#form {
+    border-style: solid;
+    border-color: black;
+    padding-top: 2%;
+}
+
+#form div {
+    margin: 2%;
+}
+
+#form button {
+    margin: 2%
+}

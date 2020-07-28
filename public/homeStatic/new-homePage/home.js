@@ -41,11 +41,14 @@ function loginUser() {
 
 function logoutUser() {
 
-    const token = localStorage.getItem("login_token");
+    const token = document.cookie.indexOf("token");
 
     if (token !== null) {
 
-        localStorage.removeItem("login_token");
+        document.getElementById("LogoutBtn").style.display = "none";
+        document.getElementById("LoginBtn").style.display = "initial";
+
+        document.cookie = "token=; expires=`Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         alert("Logged Out");
 
     } else {

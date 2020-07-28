@@ -3,14 +3,18 @@ html
         title Login
         script
             include ../public/login.js
+        style
+            include ../public/login.css
 
         body
-            h1 Login
-
-            label Email: 
-            input#email(placeholder="Enter Email" type="email" minLength=5)
-            br
-            label Password: 
-            input#password(placeholder="Enter Password" type="password" minLength=7)
-            br
-            button#submitLogin Submit
+            #Container
+                h1 Login
+                
+                #form
+                    #firstIn
+                        label Email: 
+                        input#email(placeholder="Enter Email" type="email" minLength=5)
+                    #secondIn
+                        label Password: 
+                        input#password(placeholder="Enter Password" type="password" minLength=7)
+                    button#submitLogin Login

@@ -1,50 +1,64 @@
 window.onload = () => {
 
-    document.getElementById("submitLogin").onclick = () => {
+    document.onkeydown = (event) => {
 
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        const reqBody = {
-            email: email,
-            password: password
-        };
+        if (event.code === "Enter") {
 
-        const endpoint = `${window.location.origin}/user`;
-        const reqObj = {
-            headers: {
-                "content-type": "application/json",
-                "Accept": "application/json"
-            },
-            method: "PUT",
-            body: JSON.stringify(reqBody)
-        };
+            submitLogin();
 
-        fetch(endpoint, reqObj)
-            .then(rs => {
-                console.log(rs);
-                return rs.json();
-            })
-            .then(res => {
+        }
 
-                const token = res.token;
+    }
 
-                if (token === undefined) {
+    document.getElementById("submitLogin").onclick = submitLogin;
 
-                    alert("Login Failed");
+};
 
-                } else {
+const submitLogin = () => {
 
-                    localStorage.setItem("login_token", token);
-
-                    location = location.origin;
-
-                }
-
-            })
-            .catch(err => {
-                console.log({ error: err });
-            });
-
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const reqBody = {
+        email: email,
+        password: password
     };
+
+    const endpoint = `${window.location.origin}/user`;
+    const reqObj = {
+        headers: {
+            "content-type": "application/json",
+            "Accept": "application/json"
+        },
+        method: "PUT",
+        body: JSON.stringify(reqBody)
+    };
+
+    fetch(endpoint, reqObj)
+        .then(rs => {
+            // console.log(rs);
+            return rs.json();
+        })
+        .then(res => {
+
+            const token = res.token;
+
+            if (token === undefined) {
+
+                alert("Login Failed");
+
+            } else {
+
+                document.cookie = `token=${token}`;
+
+                // localStorage.setItem("login_token", token);
+
+                location = location.origin;
+
+            }
+
+        })
+        .catch(err => {
+            console.log({ error: err });
+        });
 
 };
