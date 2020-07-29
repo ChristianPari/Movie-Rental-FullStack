@@ -23,8 +23,27 @@ function setEventListeners() {
         confirmBtns = document.getElementsByClassName('confirmEdits'),
         editBtns = document.getElementsByClassName('editBtns');
 
-    document.getElementById("LoginBtn").onclick = loginUser;
-    document.getElementById("LogoutBtn").onclick = logoutUser;
+    const logoutButton = document.getElementById("LogoutBtn");
+    const loginButton = document.getElementById("LoginBtn");
+    const adminButton = document.getElementById("AdminBtn");
+
+    if (loginButton) {
+
+        loginButton.onclick = loginUser;
+
+    }
+
+    if (logoutButton) {
+
+        logoutButton.onclick = logoutUser;
+
+    }
+
+    if (adminButton) {
+
+        adminButton.onclick = redirectAdmin;
+
+    }
 
     for (const btn of getBtns) { btn.onclick = reqMovieData; }
     for (const btn of deleteBtns) { btn.onclick = deleteMovie; }
@@ -45,17 +64,25 @@ function logoutUser() {
 
     if (token !== null) {
 
-        document.getElementById("LogoutBtn").style.display = "none";
-        document.getElementById("LoginBtn").style.display = "initial";
+        // document.getElementById("LogoutBtn").style.display = "none";
+        // document.getElementById("LoginBtn").style.display = "initial";
 
         document.cookie = "token=; expires=`Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         alert("Logged Out");
+
+        window.location.reload(true);
 
     } else {
 
         alert("You are not logged in");
 
     };
+
+};
+
+function redirectAdmin() {
+
+    location = `${location.origin}/admin`;
 
 };
 

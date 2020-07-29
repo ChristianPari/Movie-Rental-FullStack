@@ -1,7 +1,9 @@
 const express = require('express'),
     router = express.Router(),
     Movie = require('../models/Movie'),
+    User = require("../models/User"),
     adminAuth = require("../middleware/adminAuth"),
+    extractToken = require("../middleware/extractToken"),
     userAuth = require('../middleware/userAuth'),
     newError = require('../utils/newError');
 
@@ -10,6 +12,7 @@ const express = require('express'),
 // @access admin lvl 2 and higher
 router.patch(
     "/updateinv",
+    extractToken,
     adminAuth,
     async(req, res) => {
 
@@ -79,6 +82,7 @@ router.patch(
 // @access admin
 router.patch(
     "/patch/allMovies",
+    extractToken,
     adminAuth,
     async(req, res) => {
 
@@ -233,6 +237,7 @@ router.get(
 // @access admin
 router.post(
     '/',
+    extractToken,
     adminAuth,
     async(req, res) => {
 
@@ -270,8 +275,9 @@ router.post(
 // @access admin
 router.delete(
     '/:movie_id',
-    adminAuth,
     findMovie,
+    extractToken,
+    adminAuth,
     async(req, res) => {
 
         const movie = req.found_movie,
@@ -280,6 +286,8 @@ router.delete(
         try {
 
             await Movie.deleteOne({ _id: movieID });
+
+            await User.updateMany({}, { $pull: { "rentedMovies": movieID } });
 
             return res.status(200).json({
 
@@ -311,8 +319,9 @@ router.delete(
 // @access admin
 router.patch(
     '/:movie_id',
-    adminAuth,
     findMovie,
+    extractToken,
+    adminAuth,
     async(req, res) => {
 
         const oldMovie = req.found_movie,

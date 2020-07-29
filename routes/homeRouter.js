@@ -2,20 +2,32 @@ const express = require('express'),
     router = express.Router(),
     Movie = require('../models/Movie'),
     adminAuth = require('../middleware/adminAuth'),
-    extractToken = require("../middleware/extractToken");
+    extractToken = require("../middleware/extractToken"),
+    isAdmin = require("../middleware/isAdmin");
 
 router.get(
     "/",
     extractToken,
+    isAdmin,
     async(req, res) => {
 
         const loggedIn = req.authKey !== undefined;
+
+        const isAdmin = req.isAdmin || false;
 
         // expected query props: 'head, title'
         const { head, title } = req.query,
             availMovies = await Movie.find({ 'inventory.available': { $gte: 1 } });
 
-        res.render('home', { titleVar: title || 'Movies Home', mainHead: head || 'All our Movies', all_movies: availMovies, isLoggedIn: loggedIn });
+        const renderOptions = {
+            titleVar: title || "Movies Home",
+            mainHead: head || "All Movies",
+            all_movies: availMovies,
+            isLoggedIn: loggedIn,
+            isAdmin: isAdmin
+        }
+
+        res.render('home', renderOptions);
 
     }
 )
@@ -45,7 +57,7 @@ router.get('/static', (req, res) => {
 
 });
 
-router.get('/mrental/admin/:key', adminAuth, (req, res) => {
+router.get('/admin', extractToken, adminAuth, (req, res) => {
 
     res.render('admin-movie');
 

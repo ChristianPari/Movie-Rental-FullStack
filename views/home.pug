@@ -10,12 +10,12 @@ html
     
     body
         if isLoggedIn
-            button#LoginBtn(style="display: none") Login
-            button#LogoutBtn(style="display: initial") Logout
+            button#LogoutBtn Logout
         else
-            button#LoginBtn(style="display: initial") Login
-            button#LogoutBtn(style="display: none") Logout
+            button#LoginBtn Login
         
+        if isAdmin
+            button#AdminBtn Admin Page
 
         -const curYear = new Date().getFullYear();
 
@@ -31,23 +31,21 @@ html
                             h3=movieData.release
                             img(src=`${movieData.img}`, alt=`${movieData.title}'s image`)
                             a(href=`${movieData.imdb_link}`)= `${movieData.title} ImDb link`
+                        if isAdmin
+                            .editMovie
+                                form.form
+                                    label(for="title") Title
+                                    input(type="text", placeholder="Title", name="title")
+                                    label(for="release") Release
+                                    input(type="number", placeholder="Release Year", name="release", min=1900, max=curYear)
+                                    label(for="img") Image
+                                    input(type="text", placeholder="Image Link", name="img")
+                                    label(for="imdb_link") IMDB Link
+                                    input(type="url", placeholder="IMDB Link", name="imdb_link")
+                                button.confirmEdits Confirm
+                            .adminBtns
+                                button.deleteBtns Delete From Database
+                                button.editBtns Edit Movie
+                        else
                             button.getBtns Get Movie Info
                             button.rentBtns Rent Movie
-                        .editMovie
-                            form.form
-                                label(for="title") Title
-                                input(type="text", placeholder="Title", name="title")
-                                label(for="release") Release
-                                input(type="number", placeholder="Release Year", name="release", min=1900, max=curYear)
-                                label(for="img") Image
-                                input(type="text", placeholder="Image Link", name="img")
-                                label(for="imdb_link") IMDB Link
-                                input(type="url", placeholder="IMDB Link", name="imdb_link")
-                                label(for="available") Available
-                                input(type="number", placeholder="Available", name="available", min=0)
-                                label(for="rented") Rented
-                                input(type="number", placeholder="Rented", name="rented", min=0)
-                            button.confirmEdits Confirm
-                        .adminBtns
-                            button.deleteBtns Delete From Database
-                            button.editBtns Edit Movie
