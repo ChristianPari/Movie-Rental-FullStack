@@ -223,7 +223,7 @@ function confirmEdit() {
 
                     break;
 
-                case 'available':
+                    // case 'available':
 
                     // if (input.validationMessage != '') {
 
@@ -236,11 +236,10 @@ function confirmEdit() {
 
                     // }
 
-                    break;
+                    // break;
 
-                case 'rented':
+                    // case 'rented':
 
-                    console.log(input.validationMessage);
                     // if (input.validationMessage != '') {
 
                     //     console.log('rented');
@@ -252,7 +251,7 @@ function confirmEdit() {
 
                     // }
 
-                    break;
+                    // break;
 
             }
 
@@ -288,22 +287,55 @@ function confirmEdit() {
     fetch(endpoint, reqObj)
         .then(rs => { return rs.json(); })
         .then(res => { console.log(res); })
+        .then(refreshMovie({ id: movieID, data: reqBody }))
         .catch(err => { console.log(err); })
-
-    const refresh = confirm("Do you wish to refresh the page?");
-
-    if (refresh == true) { window.location.reload(true); };
-
-    refreshMovie({ id: movieID, data: reqBody });
 
 };
 
-// function refreshMovie({ id, data }) {
+function refreshMovie({ id, data }) {
 
-//     const childElms = document.getElementById(id).childNodes[0].childNodes;
+    const mainElm = document.getElementById(id),
+        childElms = mainElm.childNodes[0].childNodes,
+        editDiv = mainElm.childNodes[1],
+        displayDiv = mainElm.childNodes[0],
+        editBtn = mainElm.childNodes[2].childNodes[1];
 
-//     for
+    for (const key in data) {
 
-// };
+        switch (key) {
+
+            case "title":
+
+                childElms[1].innerText = data[key];
+
+                break;
+
+            case "release":
+
+                childElms[2].innerText = data[key];
+
+                break;
+
+            case "img":
+
+                childElms[3].src = data[key];
+
+                break;
+
+            case "imdb_link":
+
+                childElms[4].innerText = data[key];
+
+                break;
+
+        }
+
+    }
+
+    editDiv.style.display = editDiv.style.display == 'none' ? 'flex' : 'none';
+    displayDiv.style.display = displayDiv.style.display == 'none' ? 'flex' : 'none';
+    editBtn.innerText = editBtn.innerText == "Edit Movie" ? "Cancel Edit" : "Edit Movie";
+
+};
 
 // vscode-fold=1

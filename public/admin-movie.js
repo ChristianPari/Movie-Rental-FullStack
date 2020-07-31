@@ -33,6 +33,8 @@ function submitNewMovie() {
 
     });
 
+    reqBody["inventory.rented"] = [];
+
     const endpoint = `${window.location.origin}/movie`,
         reqObj = {
 
@@ -52,6 +54,7 @@ function submitNewMovie() {
     fetch(endpoint, reqObj)
         .then(rs => { return rs.json(); })
         .then(res => { console.log(res); })
+        .catch(err => { console.log(err); })
 
 };
 
