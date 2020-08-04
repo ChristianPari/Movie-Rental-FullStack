@@ -17,23 +17,28 @@ window.onload = () => {
 function submitNewMovie() {
 
     const formArray = document.getElementById('newMovieForm').childNodes;
-    let reqBody = {};
+    let reqBody = {},
+        errors = [];
 
     formArray.forEach(elm => {
 
-        if (!isNaN(elm.value)) {
-
-            reqBody[elm.name] = Number(elm.value);
-
-        } else {
-
-            reqBody[elm.name] = elm.value.trim();
-
-        }
+        reqBody[elm.name] = elm.value.trim();
 
     });
 
-    reqBody["inventory.rented"] = [];
+    // checking available movie data validation
+    const availableNum = parseInt(reqBody.available);
+
+    if (isNaN(availableNum)) errors.push("Available: Must Be A Number");
+
+    reqBody.inventory = {
+        available: availableNum,
+        rented: []
+    };
+
+    // stopping the process if there is an error
+    if (errors.length !== 0)
+        return alert(errors.join("\n"));
 
     const endpoint = `${window.location.origin}/movie`,
         reqObj = {
