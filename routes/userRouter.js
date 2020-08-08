@@ -5,19 +5,22 @@ const router = require("express").Router(),
     loginUser = require("../middleware/loginUser"),
     userAuth = require("../middleware/userAuth"),
     adminAuth = require("../middleware/adminAuth"),
+    extractToken = require("../middleware/extractToken"),
     bcrypt = require('bcrypt'),
     jwt = require("jsonwebtoken"),
     newError = require("../utils/newError"), //a util to create a custom error
     secret = process.env.JWT_SECRET,
     headKey = process.env.HEAD_AUTH_KEY;
 
-//todo merge the rent and return routes into a single request
-
+// @desc for a User to rent or return a movie
+// @path (server path)/user/rent_return
+// @access logged in User
 router.patch(
     "/rent_return",
+    extractToken,
     userAuth,
     async(req, res) => {
-
+        // needed to add extractToken middleware so we could access the token from the cookies
         const { movieID, isRenting = true } = req.body;
 
         try {

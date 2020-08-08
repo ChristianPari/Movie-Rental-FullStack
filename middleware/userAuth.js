@@ -3,6 +3,7 @@ const User = require('../models/User');
 
 module.exports = async(req, res, next) => {
 
+    // req.authKey is coming from the extractToken middleware, we assign the token we extracted to this req property
     const { JWT_SECRET: jwtKey } = process.env,
         token = req.authKey;
 

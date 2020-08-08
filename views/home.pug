@@ -9,7 +9,7 @@ html
             include ../public/homeStatic/new-homePage/home.css
     
     body
-        if isLoggedIn
+        if isLoggedIn && isJwtExpired === false
             button#LogoutBtn Logout
         else
             button#LoginBtn Login
@@ -47,5 +47,10 @@ html
                                 button.deleteBtns Delete From Database
                                 button.editBtns Edit Movie
                         else
-                            button.getBtns Get Movie Info
+                            //- button.getBtns Get Movie Info
+
+                            //- Version 1) Create Another Button for Returning
+                            //- Version 1.5) Show Opposite Button of what User is currently needing / necessary button is shown. Clearly point out to User that they are renting the movie
+                            //- Version 2) Make a single button work for both return and rent 
                             button.rentBtns Rent Movie
+                            button.returnBtns Return Movie

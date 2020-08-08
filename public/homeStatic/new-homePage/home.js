@@ -21,7 +21,9 @@ function setEventListeners() {
     const getBtns = document.getElementsByClassName('getBtns'),
         deleteBtns = document.getElementsByClassName('deleteBtns'),
         confirmBtns = document.getElementsByClassName('confirmEdits'),
-        editBtns = document.getElementsByClassName('editBtns');
+        editBtns = document.getElementsByClassName('editBtns'),
+        rentBtns = document.getElementsByClassName("rentBtns"),
+        returnBtns = document.getElementsByClassName("returnBtns");
 
     const logoutButton = document.getElementById("LogoutBtn");
     const loginButton = document.getElementById("LoginBtn");
@@ -46,9 +48,82 @@ function setEventListeners() {
     }
 
     for (const btn of getBtns) { btn.onclick = reqMovieData; }
+
     for (const btn of deleteBtns) { btn.onclick = deleteMovie; }
+
     for (const btn of confirmBtns) { btn.onclick = confirmEdit; }
+
     for (const btn of editBtns) { btn.onclick = editMovie; }
+
+    for (const btn of rentBtns) { btn.onclick = rentMovie; }
+
+    for (const btn of returnBtns) { btn.onclick = returnMovie; }
+
+};
+
+function rentMovie() {
+
+    // req body { movieID, isRenting = true }
+    // api req thats a patch, endpoint is /user/rent_return
+    // parse msg from api res and alert to user
+
+    const reqBody = {
+        movieID: this.parentElement.id,
+        isRenting: true
+    };
+
+    const endpoint = `${location.origin}/user/rent_return`;
+
+    const reqObj = {
+
+        headers: {
+
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json',
+            'content-type': 'application/json'
+
+        },
+        method: 'PATCH',
+        body: JSON.stringify(reqBody)
+
+    };
+
+    fetch(endpoint, reqObj)
+        .then(rs => rs.json())
+        .then(res => alert(res.msg || res.error))
+
+};
+
+function returnMovie() {
+
+    // req body { movieID, isRenting = true }
+    // api req thats a patch, endpoint is /user/rent_return
+    // parse msg from api res and alert to user
+
+    const reqBody = {
+        movieID: this.parentElement.id,
+        isRenting: false
+    };
+
+    const endpoint = `${location.origin}/user/rent_return`;
+
+    const reqObj = {
+
+        headers: {
+
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json',
+            'content-type': 'application/json'
+
+        },
+        method: 'PATCH',
+        body: JSON.stringify(reqBody)
+
+    };
+
+    fetch(endpoint, reqObj)
+        .then(rs => rs.json())
+        .then(res => alert(res.msg || res.error))
 
 };
 

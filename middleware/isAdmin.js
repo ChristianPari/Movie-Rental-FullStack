@@ -22,7 +22,11 @@ module.exports = async(req, res, next) => {
 
     } catch (err) {
 
-        console.log(err.message || err);
+        console.log("isAdmin:", err.message || err);
+
+        // needed bc I want the user to have to log back in when there JWT expires bc they wont be able to access certain parts of the site anyway
+        req.isExpired = true;
+
         next();
 
     }

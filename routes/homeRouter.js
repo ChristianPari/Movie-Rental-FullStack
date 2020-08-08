@@ -13,6 +13,8 @@ router.get(
 
         const loggedIn = req.authKey !== undefined;
 
+        const jwtExpired = req.isExpired !== undefined;
+
         const isAdmin = req.isAdmin || false;
 
         // expected query props: 'head, title'
@@ -24,6 +26,7 @@ router.get(
             mainHead: head || "All Movies",
             all_movies: availMovies,
             isLoggedIn: loggedIn,
+            isJwtExpired: jwtExpired,
             isAdmin: isAdmin
         }
 
