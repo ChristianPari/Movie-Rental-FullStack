@@ -16,6 +16,8 @@ module.exports = async(req, res, next) => {
         const userData = await User.findById(id);
         console.log(userData);
 
+        req.curRented = userData.rentedMovies;
+
         req.isAdmin = userData !== null && userData.admin.isAdmin === true;
 
         next()

@@ -51,6 +51,12 @@ html
 
                             //- Version 1) Create Another Button for Returning
                             //- Version 1.5) Show Opposite Button of what User is currently needing / necessary button is shown. Clearly point out to User that they are renting the movie
-                            //- Version 2) Make a single button work for both return and rent 
-                            button.rentBtns Rent Movie
-                            button.returnBtns Return Movie
+                            //- Version 2) Make a single button work for both return and rent
+                            //- if renting.indexOf(movieData._id) !== -1
+                            //-     button.returnBtns(id="false") Return Movie
+                            //- else
+                            //-     button.rentBtns(id="true") Rent Movie
+                            if renting.indexOf(movieData._id) !== -1
+                                button.actionBtns(id="false") Return Movie
+                            else
+                                button.actionBtns(id="true") Rent Movie

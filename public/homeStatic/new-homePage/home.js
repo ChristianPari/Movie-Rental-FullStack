@@ -22,8 +22,9 @@ function setEventListeners() {
         deleteBtns = document.getElementsByClassName('deleteBtns'),
         confirmBtns = document.getElementsByClassName('confirmEdits'),
         editBtns = document.getElementsByClassName('editBtns'),
-        rentBtns = document.getElementsByClassName("rentBtns"),
-        returnBtns = document.getElementsByClassName("returnBtns");
+        actionBtns = document.getElementsByClassName("actionBtns");
+    // rentBtns = document.getElementsByClassName("rentBtns"),
+    // returnBtns = document.getElementsByClassName("returnBtns");
 
     const logoutButton = document.getElementById("LogoutBtn");
     const loginButton = document.getElementById("LoginBtn");
@@ -55,13 +56,48 @@ function setEventListeners() {
 
     for (const btn of editBtns) { btn.onclick = editMovie; }
 
-    for (const btn of rentBtns) { btn.onclick = rentMovie; }
+    for (const btn of actionBtns) { btn.onclick = rent_return; }
 
-    for (const btn of returnBtns) { btn.onclick = returnMovie; }
+    // for (const btn of returnBtns) { btn.onclick = rent_return; }
 
 };
 
-function rentMovie() {
+async function rent_return() {
+
+    // req body { movieID, isRenting = true }
+    // api req thats a patch, endpoint is /user/rent_return
+    // parse msg from api res and alert to user
+
+    const reqBody = {
+        movieID: this.parentElement.id,
+        isRenting: this.id === "true" ? true : false
+    };
+
+    const endpoint = `${location.origin}/user/rent_return`;
+
+    const reqObj = {
+
+        headers: {
+
+            'Access-Control-Allow-Origin': '*',
+            Accept: 'application/json',
+            'content-type': 'application/json'
+
+        },
+        method: 'PATCH',
+        body: JSON.stringify(reqBody)
+
+    };
+
+    await fetch(endpoint, reqObj)
+        .then(rs => rs.json())
+        .then(res => alert(res.msg || res.error))
+
+    window.location.reload();
+
+}
+
+async function rentMovie() {
 
     // req body { movieID, isRenting = true }
     // api req thats a patch, endpoint is /user/rent_return
@@ -88,13 +124,16 @@ function rentMovie() {
 
     };
 
-    fetch(endpoint, reqObj)
+    await fetch(endpoint, reqObj)
         .then(rs => rs.json())
         .then(res => alert(res.msg || res.error))
 
+    window.location.reload();
+
+
 };
 
-function returnMovie() {
+async function returnMovie() {
 
     // req body { movieID, isRenting = true }
     // api req thats a patch, endpoint is /user/rent_return
@@ -121,9 +160,12 @@ function returnMovie() {
 
     };
 
-    fetch(endpoint, reqObj)
+    await fetch(endpoint, reqObj)
         .then(rs => rs.json())
         .then(res => alert(res.msg || res.error))
+
+    window.location.reload();
+
 
 };
 

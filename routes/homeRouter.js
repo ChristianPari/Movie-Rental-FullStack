@@ -17,6 +17,8 @@ router.get(
 
         const isAdmin = req.isAdmin || false;
 
+        const rentedMovies = req.curRented;
+
         // expected query props: 'head, title'
         const { head, title } = req.query,
             availMovies = await Movie.find({ 'inventory.available': { $gte: 1 } });
@@ -27,7 +29,8 @@ router.get(
             all_movies: availMovies,
             isLoggedIn: loggedIn,
             isJwtExpired: jwtExpired,
-            isAdmin: isAdmin
+            isAdmin: isAdmin,
+            renting: rentedMovies
         }
 
         res.render('home', renderOptions);
