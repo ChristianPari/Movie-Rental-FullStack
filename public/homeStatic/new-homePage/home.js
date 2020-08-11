@@ -22,9 +22,8 @@ function setEventListeners() {
         deleteBtns = document.getElementsByClassName('deleteBtns'),
         confirmBtns = document.getElementsByClassName('confirmEdits'),
         editBtns = document.getElementsByClassName('editBtns'),
-        actionBtns = document.getElementsByClassName("actionBtns");
-    // rentBtns = document.getElementsByClassName("rentBtns"),
-    // returnBtns = document.getElementsByClassName("returnBtns");
+        actionBtns = document.getElementsByClassName("actionBtns"),
+        reLoginBtns = document.getElementsByClassName("redirectLogin");
 
     const logoutButton = document.getElementById("LogoutBtn");
     const loginButton = document.getElementById("LoginBtn");
@@ -58,7 +57,7 @@ function setEventListeners() {
 
     for (const btn of actionBtns) { btn.onclick = rent_return; }
 
-    // for (const btn of returnBtns) { btn.onclick = rent_return; }
+    for (const btn of reLoginBtns) { btn.onclick = loginUser; }
 
 };
 
