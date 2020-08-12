@@ -48,9 +48,14 @@ html
                                 button.editBtns Edit Movie
                         else
                             if isLoggedIn && isJwtExpired === false  
-                                if renting.indexOf(movieData._id) !== -1
-                                    button.actionBtns(id="false") Return Movie
-                                else
-                                    button.actionBtns(id="true") Rent Movie
+
+                                //- for request needed
+                                - const bool = renting.indexOf(movieData._id) !== -1 ? false : true;
+                                
+                                //- for button text
+                                - const text = bool ? "Rent Movie" : "Return Movie"
+
+                                button.actionBtns(bool=`${bool}`)= text
+
                             else
                                 button.redirectLogin Login to Rent

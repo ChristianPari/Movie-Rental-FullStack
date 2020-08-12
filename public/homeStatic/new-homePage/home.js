@@ -69,7 +69,7 @@ async function rent_return() {
 
     const reqBody = {
         movieID: this.parentElement.id,
-        isRenting: this.id === "true" ? true : false
+        isRenting: this.attributes.bool.value === "true" ? true : false
     };
 
     const endpoint = `${location.origin}/user/rent_return`;
@@ -92,7 +92,9 @@ async function rent_return() {
         .then(rs => rs.json())
         .then(res => alert(res.msg || res.error))
 
-    window.location.reload();
+    // below are new value assignments to properties to flip the use of the button according to what the user is renting or returning
+    this.innerText = reqBody.isRenting ? "Return Movie" : "Rent Movie";
+    this.attributes.bool.value = this.attributes.bool.value === "true" ? "false" : "true";
 
 }
 
