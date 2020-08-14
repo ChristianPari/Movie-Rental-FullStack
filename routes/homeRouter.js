@@ -45,6 +45,13 @@ router.get(
     }
 )
 
+router.get(
+    "/signup",
+    (req, res) => {
+        res.render("signup")
+    }
+)
+
 router.get('/test', (req, res) => {
 
     res.render('test', { titleVariable: 'Movie Home Page', subHead: "See Movies" });
