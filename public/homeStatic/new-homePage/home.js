@@ -27,25 +27,16 @@ function setEventListeners() {
 
     const logoutButton = document.getElementById("LogoutBtn");
     const loginButton = document.getElementById("LoginBtn");
+    const signupButton = document.getElementById("SignupBtn");
     const adminButton = document.getElementById("AdminBtn");
 
-    if (loginButton) {
+    if (loginButton) loginButton.onclick = loginUser;
 
-        loginButton.onclick = loginUser;
+    if (logoutButton) logoutButton.onclick = logoutUser;
 
-    }
+    if (signupButton) signupButton.onclick = userSignup;
 
-    if (logoutButton) {
-
-        logoutButton.onclick = logoutUser;
-
-    }
-
-    if (adminButton) {
-
-        adminButton.onclick = redirectAdmin;
-
-    }
+    if (adminButton) adminButton.onclick = redirectAdmin;
 
     for (const btn of getBtns) { btn.onclick = reqMovieData; }
 
@@ -167,40 +158,6 @@ async function returnMovie() {
 
     window.location.reload();
 
-
-};
-
-function loginUser() {
-
-    location = `${window.location.origin}/login`;
-
-};
-
-function logoutUser() {
-
-    const token = document.cookie.indexOf("token");
-
-    if (token !== null) {
-
-        // document.getElementById("LogoutBtn").style.display = "none";
-        // document.getElementById("LoginBtn").style.display = "initial";
-
-        document.cookie = "token=; expires=`Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        alert("Logged Out");
-
-        window.location.reload(true);
-
-    } else {
-
-        alert("You are not logged in");
-
-    };
-
-};
-
-function redirectAdmin() {
-
-    location = `${location.origin}/admin`;
 
 };
 
@@ -455,5 +412,29 @@ function refreshMovie({ id, data }) {
     editBtn.innerText = editBtn.innerText == "Edit Movie" ? "Cancel Edit" : "Edit Movie";
 
 };
+
+const loginUser = () => location = `${window.location.origin}/login`;
+
+const logoutUser = () => {
+
+    const token = document.cookie.indexOf("token");
+
+    if (token !== null) {
+
+        document.cookie = "token=; expires=`Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        alert("Logged Out");
+
+        window.location.reload(true);
+
+    } else {
+
+        alert("You are not logged in");
+
+    };
+};
+
+const userSignup = () => location = `${window.location.origin}/signup`;
+
+const redirectAdmin = () => location = `${location.origin}/admin`;
 
 // vscode-fold=1

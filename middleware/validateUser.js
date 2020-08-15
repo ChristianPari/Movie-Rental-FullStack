@@ -5,9 +5,11 @@ module.exports = async(req, res, next) => {
 
     const email = req.body.email,
         pass = req.body.password;
+    const validEmail = /[\w-]+@([\w-]+\.)+[\w-]+/g;
+
     let failedFields = [];
 
-    if (!validator.isEmail(email)) {
+    if (!validator.isEmail(email) || !validEmail.test(email)) {
 
         failedFields.push({
             field: 'email',
