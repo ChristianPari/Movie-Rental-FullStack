@@ -4,12 +4,15 @@ html
         script
             include ../public/signup.js
         style
+            include ../public/signup.css
 
     body
-        #formDiv
-            form#signup
-                input(placeholder="Enter Email", name="email", type="email")
-                input(placeholder="Enter Password", type="password", name="password", minLength=7)
-                input(placeholder="Confrim Password", type="password", name="password", minLength=7)
-        
-        button#submitSignup Signup
+        #Container 
+            h1 Sign Up
+            #formDiv
+                form#signup
+                    input(placeholder="Enter Email", name="email", type="email")
+                    input(placeholder="Enter Password", type="password", name="password", minLength=7)
+                    input(placeholder="Confrim Password", type="password", name="password", minLength=7)
+            
+            button#submitSignup Signup
