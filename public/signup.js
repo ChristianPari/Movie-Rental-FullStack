@@ -2,6 +2,46 @@ window.onload = () => {
 
     document.getElementById("submitSignup").onclick = subSignup;
 
+    const form = document.getElementById("signup");
+
+    const fPass = form[1];
+    const sPass = form[2];
+
+    fPass.onkeyup = comparePass;
+    sPass.onkeyup = comparePass;
+}
+
+function comparePass() {
+
+    const parent = this.parentNode;
+    const thisPassVal = this.value;
+    const otherPassVal = this === parent[1] ? parent[2].value : parent[1].value;
+    const pTag = document.getElementById("passMsg");
+
+    if (
+        (thisPassVal !== "" && otherPassVal !== "") &&
+        (thisPassVal.length >= 7 && otherPassVal.length >= 7)
+    ) {
+
+        if (thisPassVal !== otherPassVal) {
+
+            pTag.innerText = "Passwords Don't Match";
+            pTag.style = ("display: initial", "color: red");
+
+        } else {
+
+            pTag.innerText = "Passwords Match";
+            pTag.style = ("display: initial", "color: green");
+
+        }
+
+    } else {
+
+        pTag.innerText = "";
+        pTag.style = ("display: none");
+
+    }
+
 }
 
 function subSignup() {
