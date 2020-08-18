@@ -2,13 +2,9 @@ window.onload = () => {
 
     document.getElementById("submitSignup").onclick = subSignup;
 
-    const form = document.getElementById("signup");
+    document.getElementById("password").onkeyup = comparePass;
 
-    const fPass = form[1];
-    const sPass = form[2];
-
-    fPass.onkeyup = comparePass;
-    sPass.onkeyup = comparePass;
+    document.getElementById("confirmPass").onkeyup = comparePass;
 }
 
 function comparePass() {
@@ -47,10 +43,9 @@ function comparePass() {
 function subSignup() {
 
     // needed variables
-    const form = this.parentNode.childNodes[0].childNodes[0];
-    const userEmail = form[0];
-    const userPassword = form[1];
-    const userPassword2 = form[2];
+    const userEmail = document.getElementById("email");
+    const userPassword = document.getElementById("password");
+    const userPassword2 = document.getElementById("confirmPass");
 
     // will store own errors, rough draft
     let errors = [];

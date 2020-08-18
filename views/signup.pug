@@ -11,13 +11,18 @@ html
             h1 Sign Up
             #formDiv
                 form#signup
-                    input(placeholder="Enter Email", name="email", type="email")
-                    input(placeholder="Enter Password", type="password", name="password", minLength=7)
-                    input(placeholder="Confrim Password", type="password", name="password", minLength=7)
-            
-                button#submitSignup Signup
+                    label Email
+                    input#email(placeholder="Enter Email", name="email", type="email")
 
-            p#passMsg(style=("display: none")) Enter Passwords
+                    label Password
+                    input#password(placeholder="Enter Password", type="password", name="password", minLength=7)
+
+                    label Confrim Password
+                    input#confirmPass(placeholder="Confrim Password", type="password", name="password", minLength=7)
+            
+                button#submitSignup Sign Up
+
+            p#passMsg(style=("display: none"))
 
             p#goToLogin
                 text Already have an account?
