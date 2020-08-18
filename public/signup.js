@@ -48,27 +48,38 @@ function subSignup() {
     const userPassword2 = document.getElementById("confirmPass");
 
     // will store own errors, rough draft
-    let errors = [];
+    let errors = {
+        email: "",
+        password: []
+    };
 
     // user sanitization
     if (!userEmail.validity.valid) {
-        errors.push("Email: Please enter a valid email address.");
+        errors.email = "Please enter a valid email address.";
     }
 
     if (userPassword.value.indexOf(" ") !== -1) {
-        errors.push("Password: Passwords cannot contain spaces.")
+        errors.password.push("Passwords cannot contain spaces.");
     }
 
     if (!userPassword.validity.valid) {
-        errors.push(`Password: ${userPassword.validationMessage}`)
+        errors.password.push(`${userPassword.validationMessage}`);
     }
 
     if (userPassword2.value !== userPassword.value) {
-        errors.push("Passwords: Passwords do not macth.")
+        errors.password.push("Passwords do not match.");
     }
 
-    if (errors.length !== 0) {
-        return alert(`${errors.join("\n")}`)
+    if (errors.email !== "" || errors.password !== []) {
+
+        const emailErr = errors.email !== "" ? `Email Errors:\n${errors.email}\n\n` : "";
+
+        const passErr = errors.password !== undefined ? `Password Errors:\n${errors.password.join("\n")}` : "";
+
+        const alertText = `${emailErr}${passErr}`;
+
+        return alert(alertText)
+
     }
 
     // variables for fetch
