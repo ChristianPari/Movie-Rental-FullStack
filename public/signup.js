@@ -5,21 +5,25 @@ window.onload = () => {
     document.getElementById("password").onkeyup = comparePass;
 
     document.getElementById("confirmPass").onkeyup = comparePass;
+
+    const form = document.getElementById("signup");
+    for (let a = 0; a < form.length; a++) {
+        form[a].value = "";
+    }
 }
 
 function comparePass() {
 
-    const parent = this.parentNode;
-    const thisPassVal = this.value;
-    const otherPassVal = this === parent[1] ? parent[2].value : parent[1].value;
+    const pass1value = document.getElementById("password").value;
+    const pass2value = document.getElementById("confirmPass").value;
     const pTag = document.getElementById("passMsg");
 
     if (
-        (thisPassVal !== "" && otherPassVal !== "") &&
-        (thisPassVal.length >= 7 && otherPassVal.length >= 7)
+        (pass1value !== "" && pass2value !== "") &&
+        (pass1value.length >= 7 && pass2value.length >= 7)
     ) {
 
-        if (thisPassVal !== otherPassVal) {
+        if (pass1value !== pass2value) {
 
             pTag.innerText = "Passwords Don't Match";
             pTag.style = ("display: initial", "color: red");
