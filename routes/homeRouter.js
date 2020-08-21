@@ -1,6 +1,7 @@
 const express = require('express'),
     router = express.Router(),
     Movie = require('../models/Movie'),
+    User = require('../models/User'),
     adminAuth = require('../middleware/adminAuth'),
     extractToken = require("../middleware/extractToken"),
     isAdmin = require("../middleware/isAdmin");
@@ -75,5 +76,30 @@ router.get('/admin', extractToken, adminAuth, (req, res) => {
     res.render('admin-movie');
 
 });
+
+router.get(
+    "/profile/:username",
+    extractToken,
+    isAdmin,
+    async(req, res) => {
+
+        const curProfileView = await User.findOne({ "username": req.params.username });
+        //^ expected values => Object or null
+
+        if (curProfileView === null) return res.redirect("/");
+
+        const viewingUser = await User.findById(req.userID);
+
+        const renderOpts = {
+            profileUser: curProfileView.username,
+            profileUserRenting: curProfileView.rentedMovies
+        }
+
+        console.log(curProfileView.rentedMovies);
+
+        res.render("profile", renderOpts);
+
+    }
+)
 
 module.exports = router;

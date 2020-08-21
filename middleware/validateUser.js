@@ -4,7 +4,9 @@ const User = require('../models/User'),
 module.exports = async(req, res, next) => {
 
     const email = req.body.email,
-        pass = req.body.password;
+        pass = req.body.password,
+        username = req.body.username;
+
     const validEmail = /[\w-]+@([\w-]+\.)+[\w-]+/g;
 
     let failedFields = [];
@@ -35,6 +37,27 @@ module.exports = async(req, res, next) => {
         failedFields.push({
             field: 'password',
             msg: "Failed Length Requirements OR Used Invalid Characters"
+        });
+
+    };
+
+    if (!validator.isLength(username, { min: 3, max: 20 })) {
+
+        failedFields.push({
+            field: 'username',
+            msg: "Failed Length Requirements"
+        })
+
+    };
+
+    const userExists = await User.findOne({ 'username': username }) != null;
+    //^ Expected outcome: boolean
+
+    if (userExists) {
+
+        failedFields.push({
+            field: 'username',
+            msg: "Username Is Already Taken"
         });
 
     };

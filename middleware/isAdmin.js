@@ -11,7 +11,6 @@ module.exports = async(req, res, next) => {
     try {
 
         const { id } = jwt.verify(token, secret);
-        console.log(id);
 
         const userData = await User.findById(id);
         console.log(userData);
@@ -19,6 +18,8 @@ module.exports = async(req, res, next) => {
         req.curRented = userData.rentedMovies;
 
         req.isAdmin = userData !== null && userData.admin.isAdmin === true;
+
+        req.userID = id;
 
         next()
 

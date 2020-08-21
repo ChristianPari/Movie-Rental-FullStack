@@ -48,18 +48,24 @@ function subSignup() {
 
     // needed variables
     const userEmail = document.getElementById("email");
+    const userName = document.getElementById("username");
     const userPassword = document.getElementById("password");
     const userPassword2 = document.getElementById("confirmPass");
 
     // will store own errors, rough draft
     let errors = {
         email: "",
+        username: "",
         password: []
     };
 
     // user sanitization
     if (!userEmail.validity.valid) {
         errors.email = "Please enter a valid email address.";
+    }
+
+    if (!userName.validity.valid) {
+        errors.username = `${userName.validationMessage}`;
     }
 
     if (userPassword.value.indexOf(" ") !== -1) {
@@ -74,13 +80,15 @@ function subSignup() {
         errors.password.push("Passwords do not match.");
     }
 
-    if (errors.email !== "" || errors.password !== []) {
+    if (errors.email !== "" || errors.password !== [] || errors.username !== []) {
 
         const emailErr = errors.email !== "" ? `Email Errors:\n${errors.email}\n\n` : "";
 
-        const passErr = errors.password !== undefined ? `Password Errors:\n${errors.password.join("\n")}` : "";
+        const passErr = errors.password !== undefined ? `Password Errors:\n${errors.password.join("\n")}\n` : "";
 
-        const alertText = `${emailErr}${passErr}`;
+        const userNameErr = errors.username !== "" ? `Username Errors:\n${errors.username}` : "";
+
+        const alertText = `${emailErr}${userNameErr}${passErr}`;
 
         return alert(alertText)
 
@@ -89,7 +97,8 @@ function subSignup() {
     // variables for fetch
     const reqBody = {
         email: userEmail.value,
-        password: userPassword.value
+        password: userPassword.value,
+        username: userName.value
     };
     const endpoint = `${window.location.origin}/user`;
     const reqObj = {
